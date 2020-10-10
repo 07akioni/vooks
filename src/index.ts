@@ -1,4 +1,4 @@
-export { default as useFalseUntilTruthy } from './use-false-unti-truthy'
+export { default as useFalseUntilTruthy } from './use-false-until-truthy'
 export { default as useMemo } from './use-memo'
 export { default as onFontReady } from './on-font-ready'
 export { default as useClickPosition } from './use-click-position'

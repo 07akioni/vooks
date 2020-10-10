@@ -4,5 +4,8 @@
     "module": "ESNext",
     "target": "ES2015",
     "outDir": "es"
-  }
+  },
+  "exclude": [
+    "**/__tests__/*"
+  ]
 }

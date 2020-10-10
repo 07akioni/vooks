@@ -4,5 +4,8 @@
     "module": "CommonJS",
     "target": "ES2015",
     "outDir": "lib"
-  }
+  },
+  "exclude": [
+    "**/__tests__/*"
+  ]
 }
