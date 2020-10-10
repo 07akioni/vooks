@@ -1,10 +1,15 @@
 import { computed, ComputedRef } from 'vue'
 
-// TODO: figure out type
-export default function useCompitable<T, V extends { [key: string]: any }> (reactive: V, keys: string[]): ComputedRef<T> {
+type ArrayElementType<T extends any[]> = T extends Array<infer U> ? U : never
+
+export default function useCompitable<T extends object, V extends keyof T> (
+  reactive: T,
+  keys: V[]
+): ComputedRef<T[ArrayElementType<V[]>]> {
   return computed(() => {
     for (const key of keys) {
       if (reactive[key] !== undefined) return reactive[key]
     }
-  }) as ComputedRef<T>
+    return reactive[keys[keys.length - 1]]
+  })
 }
