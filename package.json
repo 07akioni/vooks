@@ -1,0 +1,32 @@
+{
+  "name": "vooks",
+  "version": "0.0.1-alpha.0",
+  "description": "",
+  "main": "lib/index.js",
+  "module": "es/index.js",
+  "scripts": {
+    "lint": "eslint src/**/*",
+    "docs": "vitepress dev docs",
+    "build": "tsc -p tsconfig.cjs.json && tsc -p tsconfig.esm.json"
+  },
+  "files": [
+    "lib",
+    "es"
+  ],
+  "author": "07akioni",
+  "license": "MIT",
+  "devDependencies": {
+    "@typescript-eslint/eslint-plugin": "^4.4.0",
+    "eslint": "^7.10.0",
+    "eslint-config-standard-with-typescript": "^19.0.1",
+    "eslint-plugin-import": "^2.22.1",
+    "eslint-plugin-node": "^11.1.0",
+    "eslint-plugin-promise": "^4.2.1",
+    "eslint-plugin-standard": "^4.0.1",
+    "typescript": "^4.0.3",
+    "vitepress": "^0.6.0"
+  },
+  "dependencies": {
+    "vue": "^3.0.0"
+  }
+}

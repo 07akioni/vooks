@@ -1,0 +1,12 @@
+{
+  "compilerOptions": {
+    "lib": ["DOM", "ESNext"],
+    "strict": true,
+    "declaration": true,
+    "strictNullChecks": true,
+    "moduleResolution": "Node"
+  },
+  "include": [
+    "src/**/*"
+  ]
+}
