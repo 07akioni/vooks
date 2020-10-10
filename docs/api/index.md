@@ -17,7 +17,7 @@ Like `computed`. If computed value is not changed, component's render won't be t
 
 **Typing**
 ```ts
-<T>(valueGenerator: () => T) => DeepReadonly<Ref<T>>
+function useMemo<T> (valueGenerator: () => T): DeepReadonly<Ref<T>>
 ```
 
 ### `useMergedState`
@@ -40,7 +40,10 @@ Pick first non `undefined` value from an object.
 
 **Typing**
 ```ts
-function useCompitable<T, V extends { [key: string]: any }> (reactive: V, keys: string[]): ComputedRef<T>
+function useCompitable<T extends object, V extends keyof T> (
+  reactive: T,
+  keys: V[]
+): ComputedRef<T[GetArrayElementType<V[]>]> {
 ```
 
 ## Vue
@@ -52,16 +55,6 @@ If component is mounted.
 **Typing**
 ```ts
 function isMounted (): Readonly<Ref<Boolean>>
-```
-
-### `onMounted`
-**Description**
-
-`onMounted` with `vm` callback.
-
-**Typing**
-```ts
-function onMounted (cb: (vm: ComponentPublicInstance) => any): void
 ```
 
 ## DOM
