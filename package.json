@@ -7,6 +7,7 @@
   "scripts": {
     "lint": "eslint src/**/*",
     "docs": "vitepress dev docs",
+    "build:site": "vitepress build docs",
     "build": "tsc -p tsconfig.cjs.json && tsc -p tsconfig.esm.json"
   },
   "files": [
