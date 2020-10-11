@@ -1,9 +1,9 @@
 import { Ref, ref, readonly, onBeforeMount, onBeforeUnmount } from 'vue'
-import { clickD } from './utils'
+import { on, off } from './utils'
 
 interface MousePosition { x: number, y: number }
 
-const mousePositionRef = ref<MousePosition>()
+const mousePositionRef = ref<MousePosition | null>(null)
 
 function clickHandler (e: MouseEvent): void {
   mousePositionRef.value = {
@@ -14,12 +14,12 @@ function clickHandler (e: MouseEvent): void {
 
 let usedCount = 0
 
-export default function useClickPosition (): Readonly<Ref<MousePosition | undefined>> {
-  if (usedCount === 0) clickD.add(window, clickHandler)
+export default function useClickPosition (): Readonly<Ref<MousePosition | null>> {
+  if (usedCount === 0) on('click', window, clickHandler as any)
   onBeforeMount(() => { usedCount += 1 })
   onBeforeUnmount(() => {
     usedCount -= 1
-    if (usedCount === 0) clickD.remove(window, clickHandler)
+    if (usedCount === 0) off('click', window, clickHandler as any)
   })
   return readonly(mousePositionRef)
 }

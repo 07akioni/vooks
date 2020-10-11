@@ -1,5 +1,5 @@
 import { onBeforeMount, onBeforeUnmount, ref, Ref, readonly } from 'vue'
-import { clickD } from './utils'
+import { on, off } from './utils'
 
 const clickedTimeRef = ref<number | undefined>(undefined)
 
@@ -22,18 +22,18 @@ export default function useClicked (timeout: number): Readonly<Ref<boolean>> {
     }, timeout)
   }
   if (usedCount === 0) {
-    clickD.add(window, handleClick)
+    on('click', window, handleClick)
   }
   onBeforeMount(() => {
     usedCount += 1
-    clickD.add(window, clickedHandler)
+    off('click', window, clickedHandler)
   })
   onBeforeUnmount(() => {
     usedCount -= 1
     if (usedCount === 0) {
-      clickD.remove(window, handleClick)
+      off('click', window, handleClick)
     }
-    clickD.remove(window, clickedHandler)
+    off('click', window, clickedHandler)
     clearTimer()
   })
   return readonly(clickedRef)
