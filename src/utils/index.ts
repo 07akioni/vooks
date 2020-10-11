@@ -1,1 +1,1 @@
-export { default as clickD } from './click-delegate'
+export { on, off } from './delegate'
