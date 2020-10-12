@@ -1,9 +1,13 @@
 import {
   createApp,
-  Component
+  Component,
+  App,
+  ComponentPublicInstance
 } from 'vue'
 
 interface Wrapper {
+  app: App
+  instance: ComponentPublicInstance
   unmount: () => void
 }
 
@@ -15,8 +19,10 @@ export function mount (comp: Component, options?: object): Wrapper {
     },
     ...comp
   })
-  app.mount(div)
+  const instance = app.mount(div)
   return {
+    app,
+    instance,
     unmount: () => app.unmount(div)
   }
 }

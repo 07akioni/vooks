@@ -26,7 +26,7 @@ export default function useClicked (timeout: number): Readonly<Ref<boolean>> {
   }
   onBeforeMount(() => {
     usedCount += 1
-    off('click', window, clickedHandler)
+    on('click', window, clickedHandler)
   })
   onBeforeUnmount(() => {
     usedCount -= 1
