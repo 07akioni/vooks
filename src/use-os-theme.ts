@@ -28,6 +28,8 @@ function init (): void {
     osTheme.value = 'dark'
   } else if (lightMql.matches) {
     osTheme.value = 'light'
+  } else {
+    osTheme.value = null
   }
   darkMql.addEventListener('change', handleDarkMqlChange)
   lightMql.addEventListener('change', handleLightMqlChange)
@@ -41,6 +43,7 @@ function clean (): void {
 }
 
 export default function useOsTheme (): Readonly<Ref<Theme | null>> {
+  /* istanbul ignore next */
   if (process.env.NODE_ENV !== 'test' && !supportMatchMedia) return readonly(osTheme)
   if (process.env.NODE_ENV === 'test' && window.matchMedia === undefined) return readonly(osTheme)
   if (usedCount === 0) init()

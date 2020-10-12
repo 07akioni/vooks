@@ -25,6 +25,31 @@ describe('# useOsTheme', () => {
       })
     )
   })
+  ;['light', 'dark'].forEach(theme => {
+    it('has init theme ' + theme, () => {
+      (window.matchMedia as any) = (query: string) => {
+        return {
+          matches: query.includes(theme),
+          addEventListener () {},
+          removeEventListener () {}
+        }
+      }
+      const comp = defineComponent({
+        setup () {
+          return {
+            theme: useOsTheme()
+          }
+        },
+        created () {
+          expect(this.theme).toEqual(theme)
+        }
+      })
+      const wrapper = mount(comp)
+      const wrapper1 = mount(comp)
+      wrapper.unmount()
+      wrapper1.unmount() // for cov
+    })
+  })
   it('works', () => {
     let triggerDark: Function
     let triggerLight: Function
@@ -53,8 +78,12 @@ describe('# useOsTheme', () => {
           expect(this.theme).toEqual(null)
           triggerDark({ matches: true })
           expect(this.theme).toEqual('dark')
+          triggerDark({ matches: false })
           triggerLight({ matches: true })
           expect(this.theme).toEqual('light')
+          triggerDark({ matches: true })
+          triggerLight({ matches: false })
+          expect(this.theme).toEqual('dark')
         }
       })
     )
