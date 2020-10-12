@@ -5,8 +5,8 @@ type Theme = 'light' | 'dark'
 let usedCount = 0
 
 // Mql means media query list
-const supportMatchMedia = 'matchMedia' in window
-const osTheme: Ref<Theme | undefined> = ref()
+const supportMatchMedia = window.matchMedia !== undefined
+const osTheme: Ref<Theme | null> = ref(null)
 let darkMql: MediaQueryList | undefined
 let lightMql: MediaQueryList | undefined
 
@@ -22,29 +22,27 @@ function handleLightMqlChange (e: MediaQueryListEvent): void {
 }
 
 function init (): void {
-  if (supportMatchMedia) {
-    darkMql = window.matchMedia('(prefers-color-scheme: dark)')
-    lightMql = window.matchMedia('(prefers-color-scheme: light)')
-    if (darkMql.matches) {
-      osTheme.value = 'dark'
-    } else if (lightMql.matches) {
-      osTheme.value = 'light'
-    }
-    darkMql.addEventListener('change', handleDarkMqlChange)
-    lightMql.addEventListener('change', handleLightMqlChange)
+  darkMql = window.matchMedia('(prefers-color-scheme: dark)')
+  lightMql = window.matchMedia('(prefers-color-scheme: light)')
+  if (darkMql.matches) {
+    osTheme.value = 'dark'
+  } else if (lightMql.matches) {
+    osTheme.value = 'light'
   }
+  darkMql.addEventListener('change', handleDarkMqlChange)
+  lightMql.addEventListener('change', handleLightMqlChange)
 }
 
 function clean (): void {
-  if (supportMatchMedia) {
-    ;(darkMql as MediaQueryList).removeEventListener('change', handleDarkMqlChange)
-    ;(lightMql as MediaQueryList).removeEventListener('change', handleLightMqlChange)
-    darkMql = undefined
-    lightMql = undefined
-  }
+  ;(darkMql as MediaQueryList).removeEventListener('change', handleDarkMqlChange)
+  ;(lightMql as MediaQueryList).removeEventListener('change', handleLightMqlChange)
+  darkMql = undefined
+  lightMql = undefined
 }
 
-export default function useOsTheme (): Readonly<Ref<Theme | undefined>> {
+export default function useOsTheme (): Readonly<Ref<Theme | null>> {
+  if (process.env.NODE_ENV !== 'test' && !supportMatchMedia) return readonly(osTheme)
+  if (process.env.NODE_ENV === 'test' && window.matchMedia === undefined) return readonly(osTheme)
   if (usedCount === 0) init()
   onBeforeMount(() => { usedCount += 1 })
   onBeforeUnmount(() => {

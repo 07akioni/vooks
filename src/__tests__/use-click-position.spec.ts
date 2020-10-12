@@ -3,7 +3,7 @@ import { useClickPosition } from '../index'
 import { defineComponent } from 'vue'
 
 describe('# useClickPosition', () => {
-  it('is null when not clicked', (done) => {
+  it('is null when not clicked', () => {
     const wrapper = mount(defineComponent({
       setup () {
         return {
@@ -12,12 +12,11 @@ describe('# useClickPosition', () => {
       },
       mounted () {
         expect(this.position).toEqual(null)
-        done()
       }
     }))
     wrapper.unmount()
   })
-  it('works', (done) => {
+  it('works', () => {
     const comp = defineComponent({
       setup () {
         return {
@@ -33,7 +32,6 @@ describe('# useClickPosition', () => {
           x: 100,
           y: 100
         })
-        done()
       }
     })
     // use two wrappers to cover all lines
