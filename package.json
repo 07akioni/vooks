@@ -1,6 +1,6 @@
 {
   "name": "vooks",
-  "version": "0.0.1-alpha.0",
+  "version": "0.0.1-alpha.1",
   "description": "",
   "main": "lib/index.js",
   "module": "es/index.js",
@@ -9,7 +9,8 @@
     "lint": "eslint src/**/*",
     "docs": "vitepress dev docs",
     "build:site": "vitepress build docs",
-    "build": "tsc -p tsconfig.cjs.json && tsc -p tsconfig.esm.json"
+    "build": "tsc -p tsconfig.cjs.json && tsc -p tsconfig.esm.json",
+    "release": "rm -rf es lib && npm run build && npm publish"
   },
   "files": [
     "lib",
