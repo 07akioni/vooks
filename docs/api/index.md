@@ -85,7 +85,7 @@ Triggered when fonts are ready in browser.
 
 **Typing**
 ```ts
-function onFontsReady (cb: (vm: ComponentPublicInstance) => any): void
+function onFontsReady (cb: () => any): void
 ```
 
 ## OS
