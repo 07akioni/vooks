@@ -15,11 +15,11 @@ function clickHandler (e: MouseEvent): void {
 let usedCount = 0
 
 export default function useClickPosition (): Readonly<Ref<MousePosition | null>> {
-  if (usedCount === 0) on('click', window, clickHandler as any)
+  if (usedCount === 0) on('click', window, clickHandler as any, true)
   onBeforeMount(() => { usedCount += 1 })
   onBeforeUnmount(() => {
     usedCount -= 1
-    if (usedCount === 0) off('click', window, clickHandler as any)
+    if (usedCount === 0) off('click', window, clickHandler as any, true)
   })
   return readonly(mousePositionRef)
 }
