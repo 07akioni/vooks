@@ -98,3 +98,14 @@ Use the value of current OS theme.
 ```ts
 function useOsTheme (): Readonly<Ref<Theme | undefined>>
 ```
+
+### `useIsIos`
+**Description**
+
+If current OS is iOS
+
+
+**Typing**
+```ts
+function useIsIos (): boolean
+```
