@@ -1,11 +1,20 @@
-type ElToHandlers = Map<EventTarget, Set<(e: Event) => any>>
+interface Handlers {
+  bubble: Set<(e: Event) => any>
+  capture: Set<(e: Event) => any>
+}
+type ElToHandlers = Map<EventTarget, Handlers>
 type UnifiedHandler = (e: Event) => any
 
 interface Delegate {
-  on: (type: string, el: EventTarget, handler: (e: Event) => any) => void
-  off: (type: string, el: EventTarget, handler: (e: Event) => any) => void
+  on:
+  ((type: string, el: EventTarget, handler: (e: Event) => any, useCapture?: boolean) => void) &
+  ((type: string, el: EventTarget, handler: (e: Event) => any, options?: EventListenerOptions) => void)
+  off:
+  ((type: string, el: EventTarget, handler: (e: Event) => any, useCapture?: boolean) => void) &
+  ((type: string, el: EventTarget, handler: (e: Event) => any, useCapture?: EventListenerOptions) => void)
 }
 
+// currently `once` and `passive` is not supported
 function createDelegate (): Delegate {
   const typeToElToHandlers: {
     [key: string]: ElToHandlers | undefined
@@ -19,18 +28,30 @@ function createDelegate (): Delegate {
   ): (e: Event) => any {
     const delegeteHandler = function (e: Event): void {
       let cursor = e.target
-      // bubbling
+      const path = []
+      // collecting bubble path
       while (true) {
         if (cursor === null) cursor = window
-        const handlers = elToHandlers.get(cursor)
-        if (handlers !== undefined) {
-          handlers.forEach(handler => handler(e))
-        }
+        path.push(cursor)
         if (cursor === window) {
           break
         }
         // eslint-disable-next-line @typescript-eslint/strict-boolean-expressions
         cursor = ((cursor as any).parentElement || null) as (EventTarget | null)
+      }
+      // capture
+      for (let i = path.length - 1; i >= 0; --i) {
+        const handlers = elToHandlers.get(path[i])
+        if (handlers !== undefined) {
+          handlers.capture.forEach(handler => handler(e))
+        }
+      }
+      // bubble
+      for (let i = 0; i < path.length; ++i) {
+        const handlers = elToHandlers.get(path[i])
+        if (handlers !== undefined) {
+          handlers.bubble.forEach(handler => handler(e))
+        }
       }
     }
     delegeteHandler.displayName = `${type}UnifiedHandler`
@@ -54,34 +75,51 @@ function createDelegate (): Delegate {
     if (typeToElToHandlers[type] === undefined) {
       typeToElToHandlers[type] = new Map()
       const unifiedHandler = ensureUnifiedHandler(type)
-      window.addEventListener(type, unifiedHandler)
+      window.addEventListener(type, unifiedHandler, true)
     }
     return typeToElToHandlers[type] as ElToHandlers
   }
   function ensureHandlers (
     elToHandlers: ElToHandlers,
     el: EventTarget
-  ): Set<(e: Event) => any> {
+  ): Handlers {
     let elHandlers = elToHandlers.get(el)
     if (elHandlers === undefined) {
-      elToHandlers.set(el, (elHandlers = new Set()))
+      elToHandlers.set(el, (elHandlers = {
+        bubble: new Set(),
+        capture: new Set()
+      }))
     }
     return elHandlers
   }
   function on (
     type: string,
     el: EventTarget,
-    handler: (e: Event) => any
+    handler: (e: Event) => any,
+    options?: boolean | EventListenerOptions
   ): void {
     const elToHandlers = ensureElToHandlers(type)
     const handlers = ensureHandlers(elToHandlers, el)
-    if (!handlers.has(handler)) handlers.add(handler)
+    const phase = (
+      options === true || (typeof options === 'object' && options.capture === true)
+    ) ? 'capture' : 'bubble'
+    const phaseHandlers = handlers[phase]
+    if (!phaseHandlers.has(handler)) phaseHandlers.add(handler)
   }
-  function off (type: string, el: EventTarget, handler: (e: Event) => any): void {
+  function off (
+    type: string,
+    el: EventTarget,
+    handler: (e: Event) => any,
+    options?: boolean | EventListenerOptions
+  ): void {
     const elToHandlers = ensureElToHandlers(type)
     const handlers = ensureHandlers(elToHandlers, el)
-    if (handlers.has(handler)) handlers.delete(handler)
-    if (handlers.size === 0) {
+    const phase = (
+      options === true || (typeof options === 'object' && options.capture === true)
+    ) ? 'capture' : 'bubble'
+    const phaseHandlers = handlers[phase]
+    if (phaseHandlers.has(handler)) phaseHandlers.delete(handler)
+    if (phaseHandlers.size === 0) {
       elToHandlers.delete(el)
     }
     if (elToHandlers.size === 0) {
