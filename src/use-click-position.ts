@@ -1,5 +1,5 @@
 import { Ref, ref, readonly, onBeforeMount, onBeforeUnmount } from 'vue'
-import { on, off } from './utils'
+import { on, off } from 'evtd'
 
 interface MousePosition { x: number, y: number }
 

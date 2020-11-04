@@ -11,7 +11,9 @@ describe('# useClicked', () => {
         }
       },
       mounted () {
-        window.dispatchEvent(new MouseEvent('click'))
+        document.dispatchEvent(new MouseEvent('click', {
+          bubbles: true
+        }))
         expect(this.clicked).toEqual(true)
       }
     }))
@@ -29,7 +31,9 @@ describe('# useClicked', () => {
         }
       },
       mounted () {
-        window.dispatchEvent(new MouseEvent('click'))
+        document.dispatchEvent(new MouseEvent('click', {
+          bubbles: true
+        }))
         expect(this.clicked).toEqual(true)
       }
     })
@@ -39,7 +43,7 @@ describe('# useClicked', () => {
       expect((wrapper.instance as any).clicked).toEqual(false)
       expect((wrapper2.instance as any).clicked).toEqual(false)
       wrapper.unmount()
-      window.dispatchEvent(new MouseEvent('click'))
+      document.dispatchEvent(new MouseEvent('click'))
       expect((wrapper2.instance as any).clicked).toEqual(true)
       setTimeout(() => {
         expect((wrapper2.instance as any).clicked).toEqual(false)

@@ -1,5 +1,5 @@
 import { onBeforeMount, onBeforeUnmount, ref, Ref, readonly } from 'vue'
-import { on, off } from './utils'
+import { on, off } from 'evtd'
 
 const clickedTimeRef = ref<number | undefined>(undefined)
 

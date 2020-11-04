@@ -24,9 +24,10 @@ describe('# useClickPosition', () => {
         }
       },
       mounted () {
-        window.dispatchEvent(new MouseEvent('click', {
+        document.dispatchEvent(new MouseEvent('click', {
           clientX: 100,
-          clientY: 100
+          clientY: 100,
+          bubbles: true
         }))
         expect(this.position).toEqual({
           x: 100,
