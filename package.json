@@ -5,7 +5,7 @@
   "main": "lib/index.js",
   "module": "es/index.js",
   "scripts": {
-    "test": "jest",
+    "test": "jest --forceExit",
     "lint": "eslint src/**/*",
     "docs": "vitepress dev docs",
     "build:site": "vitepress build docs",
