@@ -1,6 +1,6 @@
 export { default as useFalseUntilTruthy } from './use-false-until-truthy'
 export { default as useMemo } from './use-memo'
-export { default as onFontReady } from './on-font-ready'
+export { default as onFontsReady } from './on-fonts-ready'
 export { default as useClickPosition } from './use-click-position'
 export { default as useClicked } from './use-clicked'
 export { default as useOsTheme } from './use-os-theme'

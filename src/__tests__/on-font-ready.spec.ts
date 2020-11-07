@@ -1,8 +1,8 @@
 import { defineComponent } from 'vue'
-import { onFontReady } from '../index'
+import { onFontsReady } from '../index'
 import { mount } from './utils'
 
-describe('# onFontReady', () => {
+describe('# onFontsReady', () => {
   let fonts: any
   beforeEach(() => {
     fonts = (document as any).fonts
@@ -17,7 +17,7 @@ describe('# onFontReady', () => {
     const fn = jest.fn()
     const wrapper = mount(defineComponent({
       setup () {
-        onFontReady(fn)
+        onFontsReady(fn)
       }
     }))
     setTimeout(() => {
@@ -33,7 +33,7 @@ describe('# onFontReady', () => {
     }
     const wrapper = mount(defineComponent({
       setup () {
-        onFontReady(fn)
+        onFontsReady(fn)
       }
     }))
     setTimeout(() => {
@@ -50,7 +50,7 @@ describe('# onFontReady', () => {
     }
     const wrapper = mount(defineComponent({
       setup () {
-        onFontReady(fn)
+        onFontsReady(fn)
       }
     }))
     wrapper.unmount()

@@ -78,7 +78,7 @@ It is `true` after clicked and before timeout is reached. Otherwise it is `false
 function useClicked (timeout: number): Readonly<Ref<boolean>>
 ```
 
-### `onFontReady`
+### `onFontsReady`
 **Description**
 
 Triggered when fonts are ready in browser.
