@@ -1,23 +1,23 @@
 /* eslint-disable @typescript-eslint/consistent-type-assertions */
 import { ref, computed, onBeforeUnmount, ComputedRef } from 'vue'
 
-type Breakpoints = 'xs' | 's' | 'm' | 'l' | 'xl'
-const breakpoints: Breakpoints[] = ['xs', 's', 'm', 'l', 'xl']
+export type Breakpoint = 'xs' | 's' | 'm' | 'l' | 'xl'
+const breakpoints: Breakpoint[] = ['xs', 's', 'm', 'l', 'xl']
 
 type BreakpointStatus = {
-  [key in Breakpoints]: boolean
+  [key in Breakpoint]: boolean
 }
 
 type mqlHandler = (e: MediaQueryListEvent) => void
 
 type BreakpointHandler = {
-  [key in Breakpoints]: mqlHandler
+  [key in Breakpoint]: mqlHandler
 }
 
 const breakpointStatusRef = ref<BreakpointStatus>({} as BreakpointStatus)
 
 const mediaQueries: {
-  [key in Breakpoints]: string
+  [key in Breakpoint]: string
 } = {
   xs: '(min-width: 0px)',
   s: '(min-width: 600px)',
@@ -36,13 +36,13 @@ const handlerMap: BreakpointHandler = Object.fromEntries(breakpoints.map(k => {
 })) as any
 
 type MqlMap = {
-  [key in Breakpoints]?: MediaQueryList
+  [key in Breakpoint]?: MediaQueryList
 }
 const mqlMap: MqlMap = {} as MqlMap
 
 function init (): void {
   breakpointStatusRef.value = (
-    Object.entries(mediaQueries) as Array<[Breakpoints, string]>
+    Object.entries(mediaQueries) as Array<[Breakpoint, string]>
   ).reduce(
     (breakpointStatus, [key, value]) => {
       const mql = window.matchMedia(value)
@@ -65,7 +65,7 @@ function clear (): void {
 
 let usedCount: number = 0
 
-export default function useBreakpoints (): ComputedRef<Breakpoints[]> {
+export default function useBreakpoint (): ComputedRef<Breakpoint[]> {
   if (usedCount === 0) {
     usedCount++
     init()
@@ -76,7 +76,7 @@ export default function useBreakpoints (): ComputedRef<Breakpoints[]> {
       clear()
     }
   })
-  return computed<Breakpoints[]>(() => {
+  return computed<Breakpoint[]>(() => {
     const { value } = breakpointStatusRef
     return breakpoints.filter(key => value[key])
   })
