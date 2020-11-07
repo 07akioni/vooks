@@ -88,6 +88,26 @@ Triggered when fonts are ready in browser.
 function onFontsReady (cb: () => any): void
 ```
 
+### `useBreakpoints`
+**Description**
+The current covered breakpoints of browser window size.
+
+**Typing**
+```ts
+function useBreakpoints (): ComputedRef<Breakpoint[]>
+type Breakpoint = 'xs' | 's' | 'm' | 'l' | 'xl'
+```
+
+### `useBreakpoint`
+**Description**
+The current browser window size.
+
+**Typing**
+```ts
+function useBreakpoint (): ComputedRef<Breakpoint>
+type Breakpoint = 'xs' | 's' | 'm' | 'l' | 'xl'
+```
+
 ## OS
 ### `useOsTheme`
 **Description:**

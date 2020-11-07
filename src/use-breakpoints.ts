@@ -65,7 +65,7 @@ function clear (): void {
 
 let usedCount: number = 0
 
-export default function useBreakpoint (): ComputedRef<Breakpoint[]> {
+export default function useBreakpoints (): ComputedRef<Breakpoint[]> {
   if (usedCount === 0) {
     usedCount++
     init()
