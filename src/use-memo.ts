@@ -1,12 +1,12 @@
-import { computed, ref, readonly, Ref, watch, DeepReadonly } from 'vue'
+import { computed, ref, Ref, watch, ComputedRef } from 'vue'
 
-function useMemo<T> (valueGenerator: () => T): DeepReadonly<Ref<T>> {
+function useMemo<T> (valueGenerator: () => T): ComputedRef<T> {
   const computedValueRef = computed(valueGenerator)
   const valueRef = ref(computedValueRef.value) as Ref<T>
   watch(computedValueRef, value => {
     valueRef.value = value
   })
-  return readonly(valueRef)
+  return valueRef as ComputedRef<T>
 }
 
 export default useMemo
