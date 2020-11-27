@@ -1,4 +1,4 @@
-import { onBeforeMount, onBeforeUnmount, reactive, readonly } from 'vue'
+import { onBeforeMount, onBeforeUnmount, reactive, readonly, Ref, watch } from 'vue'
 import { on, off } from 'evtd'
 
 interface useKeyboardOptions {
@@ -24,7 +24,10 @@ interface UseKeyboardState {
   tab: boolean
 }
 
-export default function useKeyboard (options: useKeyboardOptions = {}): Readonly<UseKeyboardState> {
+export default function useKeyboard (
+  options: useKeyboardOptions = {},
+  enabledRef?: Ref<boolean>
+): Readonly<UseKeyboardState> {
   const state = reactive<UseKeyboardState>({
     ctrl: false,
     command: false,
@@ -99,12 +102,27 @@ export default function useKeyboard (options: useKeyboardOptions = {}): Readonly
     }
   }
   onBeforeMount(() => {
-    on('keydown', document, keydownHandler)
-    on('keyup', document, keyupHandler)
+    if (enabledRef === undefined || enabledRef.value) {
+      on('keydown', document, keydownHandler)
+      on('keyup', document, keyupHandler)
+    }
+    if (enabledRef !== undefined) {
+      watch(enabledRef, value => {
+        if (value) {
+          on('keydown', document, keydownHandler)
+          on('keyup', document, keyupHandler)
+        } else {
+          off('keydown', document, keydownHandler)
+          off('keyup', document, keyupHandler)
+        }
+      })
+    }
   })
   onBeforeUnmount(() => {
-    off('keydown', document, keydownHandler)
-    off('keyup', document, keyupHandler)
+    if (enabledRef === undefined || enabledRef.value) {
+      off('keydown', document, keydownHandler)
+      off('keyup', document, keyupHandler)
+    }
   })
   return readonly(state)
 }
