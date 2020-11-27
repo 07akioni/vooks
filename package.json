@@ -36,7 +36,7 @@
     "vitepress": "^0.7.1"
   },
   "dependencies": {
-    "evtd": "^0.0.1-alpha.0",
+    "evtd": "^0.1.0",
     "vue": "^3.0.0"
   },
   "sideEffects": false
