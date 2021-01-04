@@ -33,7 +33,7 @@
     "eslint-plugin-standard": "^4.0.1",
     "jest": "^26.5.2",
     "typescript": "^4.0.3",
-    "vitepress": "^0.9.0"
+    "vitepress": "^0.10.6"
   },
   "dependencies": {
     "evtd": "^0.1.0",
