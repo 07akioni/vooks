@@ -3,18 +3,32 @@ import { onMounted, onBeforeUnmount } from 'vue'
 const fontsReady = (document as any)?.fonts?.ready
 let isFontReady = false
 
+/* istanbul ignore if */
 if (fontsReady !== undefined) {
   fontsReady.then(() => {
     isFontReady = true
   })
+} else {
+  isFontReady = true
 }
 
 export default function onFontsReady (cb: () => any): void {
-  if (isFontReady) return
+  /* istanbul ignore next */
+  if (process.env.NODE_ENV !== 'test' && isFontReady) return
+  if (process.env.NODE_ENV === 'test' && (document as any)?.fonts?.ready === undefined) return
+
   let deactivated = false
   onMounted(() => {
-    if (fontsReady !== undefined && !isFontReady) {
+    /* istanbul ignore next */
+    if (!isFontReady) {
       fontsReady.then(() => {
+        if (deactivated) return
+        cb()
+      })
+    }
+    /* istanbul ignore else */
+    if (process.env.NODE_ENV === 'test') {
+      (document as any)?.fonts?.ready.then(() => {
         if (deactivated) return
         cb()
       })

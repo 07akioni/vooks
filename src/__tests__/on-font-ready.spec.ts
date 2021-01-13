@@ -26,7 +26,7 @@ describe('# onFontsReady', () => {
       done()
     }, 0)
   })
-  it('should been called when documnt does not support fonts.ready', (done) => {
+  it('should be called when documnt supports fonts.ready', (done) => {
     const fn = jest.fn()
     ;(document as any).fonts = {
       ready: Promise.resolve()
