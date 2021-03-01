@@ -94,20 +94,42 @@ The current covered breakpoints of browser window size.
 
 **Typing**
 ```ts
-function useBreakpoints (): ComputedRef<Breakpoint[]>
-type Breakpoint = 'xs' | 's' | 'm' | 'l' | 'xl'
+function useBreakpoints (screens?: { [key: string]: number }): ComputedRef<ScreenBreakpoint[]>
+```
+
+**Params**
+Default value of `screens` is
+```
+{
+  xs: 0, // mobile
+  s: 640, // tablet
+  m: 1024, // laptop s
+  l: 1280, // laptop
+  xl: 1536, // laptop l
+  xxl: 1920 // normal desktop display
+}
+```
+
+**Example**
+```ts
+const breakpointsRef = useBreakpoints({ s: 500, m: 1000 })
+// returns [] (<500px)
+// returns ['s'] (>=500px, <1000px)
+// returns ['s', 'm'] (>=1000px)
 ```
 
 ### `useBreakpoint`
 **Description**
-The current browser window size.
+The current browser window size. It's the last array value of `useBreakpoints`.
+
+Returns `undefined` if no corresponding screen size exists.
+
+Default `screens` value is the same as `useBreakpoints`.
 
 **Typing**
 ```ts
-function useBreakpoint (): ComputedRef<Breakpoint>
-type Breakpoint = 'xs' | 's' | 'm' | 'l' | 'xl'
+function useBreakpoint (screens?: { [key: string]: number }): ComputedRef<ScreenBreakpoint> | undefined
 ```
-
 ## OS
 ### `useOsTheme`
 **Description:**

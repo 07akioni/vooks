@@ -1,83 +1,98 @@
 /* eslint-disable @typescript-eslint/consistent-type-assertions */
 import { ref, computed, onBeforeUnmount, ComputedRef } from 'vue'
 
-export type Breakpoint = 'xs' | 's' | 'm' | 'l' | 'xl'
-const breakpoints: Breakpoint[] = ['xs', 's', 'm', 'l', 'xl']
+export interface BreakpointOptions extends Record<string, number> {}
+export type ExtractBreakpoint<T> = keyof T
+export type ExtractBreakpointStatus<T> = {
+  [k in keyof T]: boolean
+}
+export type BreakpointHandler = {
+  [k in string]: mqlHandler
+}
+export type ExtractMediaQueries<T> = {
+  [key in keyof T]: string
+}
 
-type BreakpointStatus = {
-  [key in Breakpoint]: boolean
+const defaultBreakpointOptions: BreakpointOptions = {
+  // mobile
+  // 0 ~ 640 doesn't mean it should display well in all the range,
+  // but means you should treat it like a mobile phone.)
+  xs: 0,
+  s: 640, // tablet
+  m: 1024, // laptop s
+  l: 1280, // laptop
+  xl: 1536, // in my point of view, 1280 and 1440 should share the same layout in most time
+  xxl: 1920 // normal desktop display
 }
 
 type mqlHandler = (e: MediaQueryListEvent) => void
 
-type BreakpointHandler = {
-  [key in Breakpoint]: mqlHandler
+function createMediaQuery (screenWidth: number): string {
+  return `(min-width: ${screenWidth}px)`
 }
-
-const breakpointStatusRef = ref<BreakpointStatus>({} as BreakpointStatus)
-
-const mediaQueries: {
-  [key in Breakpoint]: string
-} = {
-  xs: '(min-width: 0px)',
-  s: '(min-width: 600px)',
-  m: '(min-width: 1024px)',
-  l: '(min-width: 1440px)',
-  xl: '(min-width: 1920px)'
-}
-
-const handlerMap: BreakpointHandler = Object.fromEntries(breakpoints.map(k => {
-  return [
-    k,
-    (e: MediaQueryListEvent) => {
-      breakpointStatusRef.value[k] = e.matches
-    }
-  ]
-})) as any
 
 type MqlMap = {
-  [key in Breakpoint]?: MediaQueryList
+  [key in string]: {
+    mql: MediaQueryList
+    cbs: Set<OnMqlChange>
+  }
 }
 const mqlMap: MqlMap = {} as MqlMap
 
-function init (): void {
-  breakpointStatusRef.value = (
-    Object.entries(mediaQueries) as Array<[Breakpoint, string]>
-  ).reduce(
-    (breakpointStatus, [key, value]) => {
-      const mql = window.matchMedia(value)
-      mqlMap[key] = mql
-      breakpointStatus[key] = mql.matches
-      mql.addEventListener('change', handlerMap[key])
-      return breakpointStatus
-    },
-    // eslint-disable-next-line @typescript-eslint/prefer-reduce-type-parameter
-    {} as BreakpointStatus
-  )
-}
+type OnMqlChange = (e: MediaQueryListEvent | MediaQueryList, breakpointName: string) => void
 
-function clear (): void {
-  breakpoints.forEach((key) => {
-    mqlMap[key]?.removeEventListener('change', handlerMap[key])
-    mqlMap[key] = undefined
-  })
-}
+export default function useBreakpoints<T extends BreakpointOptions> (
+  screens: T = defaultBreakpointOptions as T
+): ComputedRef<Array<ExtractBreakpoint<T>>> {
+  type BreakpointStatus = ExtractBreakpointStatus<T>
 
-let usedCount: number = 0
+  const breakpointStatusRef = ref<BreakpointStatus>({} as BreakpointStatus)
+  const breakpoints = Object.keys(screens)
 
-export default function useBreakpoints (): ComputedRef<Breakpoint[]> {
-  if (usedCount === 0) {
-    usedCount++
-    init()
+  const updateBreakpoints: OnMqlChange = (e, breakpointName) => {
+    if (e.matches) breakpointStatusRef.value[breakpointName] = true
+    else breakpointStatusRef.value[breakpointName] = false
   }
-  onBeforeUnmount(() => {
-    usedCount--
-    if (usedCount === 0) {
-      clear()
+
+  breakpoints.forEach(key => {
+    const breakpointValue = screens[key]
+    let mql: MediaQueryList
+    let cbs: Set<OnMqlChange>
+    if (mqlMap[breakpointValue] === undefined) {
+      mql = window.matchMedia(createMediaQuery(breakpointValue))
+      mql.addEventListener('change', (e: MediaQueryListEvent) => {
+        cbs.forEach(cb => {
+          cb(e, key)
+        })
+      })
+      cbs = new Set()
+      mqlMap[breakpointValue] = {
+        mql,
+        cbs
+      }
+    } else {
+      mql = mqlMap[breakpointValue].mql
+      cbs = mqlMap[breakpointValue].cbs
+    }
+    cbs.add(updateBreakpoints)
+    if (mql.matches) {
+      cbs.forEach(cb => {
+        cb(mql, key)
+      })
     }
   })
-  return computed<Breakpoint[]>(() => {
+
+  onBeforeUnmount(() => {
+    breakpoints.forEach(breakpoint => {
+      const { cbs } = mqlMap[screens[breakpoint]]
+      if (cbs.has(updateBreakpoints)) {
+        cbs.delete(updateBreakpoints)
+      }
+    })
+  })
+
+  return computed<Array<ExtractBreakpoint<T>>>(() => {
     const { value } = breakpointStatusRef
-    return breakpoints.filter(key => value[key])
+    return breakpoints.filter((key) => value[key]) as any
   })
 }
