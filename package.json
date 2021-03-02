@@ -6,7 +6,8 @@
   "module": "es/index.js",
   "scripts": {
     "dev": "vite",
-    "test": "jest",
+    "test-dts": "tsc src/dts-test/index.spec.ts --noEmit --lib ESNext,DOM",
+    "test": "npm run test-dts && jest",
     "lint": "eslint src/**/*",
     "docs": "vitepress dev docs",
     "build:site": "vitepress build docs",

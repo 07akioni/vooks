@@ -1,8 +1,8 @@
 /* eslint-disable @typescript-eslint/consistent-type-assertions */
 import { ref, computed, onBeforeUnmount, ComputedRef } from 'vue'
 
-export interface BreakpointOptions extends Record<string, number> {}
-export type ExtractBreakpoint<T> = keyof T
+export type BreakpointOptions = Record<string, number>
+export type ExtractBreakpoint<T extends Record<string, number>> = keyof T
 export type ExtractBreakpointStatus<T> = {
   [k in keyof T]: boolean
 }

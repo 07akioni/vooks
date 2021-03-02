@@ -6,6 +6,7 @@
     "outDir": "lib"
   },
   "exclude": [
-    "**/__tests__/*"
+    "**/__tests__/**/*",
+    "**/dts-test/**/*"
   ]
 }
