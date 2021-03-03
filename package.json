@@ -5,13 +5,14 @@
   "main": "lib/index.js",
   "module": "es/index.js",
   "scripts": {
+    "clean": "rm -rf es lib",
     "dev": "vite",
     "test-dts": "tsc src/dts-test/index.spec.ts --noEmit --lib ESNext,DOM",
     "test": "npm run test-dts && jest",
     "lint": "eslint src/**/*",
     "docs": "vitepress dev docs",
     "build:site": "vitepress build docs",
-    "build": "tsc -p tsconfig.cjs.json && tsc -p tsconfig.esm.json",
+    "build": "npm run clean && tsc -p tsconfig.cjs.json && tsc -p tsconfig.esm.json",
     "release": "rm -rf es lib && npm run build && npm publish"
   },
   "files": [

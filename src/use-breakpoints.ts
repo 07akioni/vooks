@@ -13,7 +13,7 @@ export type ExtractMediaQueries<T> = {
   [key in keyof T]: string
 }
 
-const defaultBreakpointOptions: BreakpointOptions = {
+export const defaultBreakpointOptions = {
   // mobile
   // 0 ~ 640 doesn't mean it should display well in all the range,
   // but means you should treat it like a mobile phone.)
@@ -22,8 +22,10 @@ const defaultBreakpointOptions: BreakpointOptions = {
   m: 1024, // laptop s
   l: 1280, // laptop
   xl: 1536, // in my point of view, 1280 and 1440 should share the same layout in most time
-  xxl: 1920 // normal desktop display
+  '2xl': 1920 // normal desktop display
 }
+
+export type DefaultBreakpointOptions = typeof defaultBreakpointOptions
 
 type mqlHandler = (e: MediaQueryListEvent) => void
 
@@ -39,10 +41,19 @@ type MqlMap = {
 }
 const mqlMap: MqlMap = {} as MqlMap
 
-type OnMqlChange = (e: MediaQueryListEvent | MediaQueryList, breakpointName: string) => void
+type OnMqlChange = (
+  e: MediaQueryListEvent | MediaQueryList,
+  breakpointName: string
+) => void
 
-export default function useBreakpoints<T extends BreakpointOptions> (
-  screens: T = defaultBreakpointOptions as T
+function useBreakpoints (): ComputedRef<
+Array<ExtractBreakpoint<DefaultBreakpointOptions>>
+>
+function useBreakpoints<T extends BreakpointOptions> (
+  screens: T
+): ComputedRef<Array<ExtractBreakpoint<T>>>
+function useBreakpoints<T extends BreakpointOptions> (
+  screens: T = (defaultBreakpointOptions as unknown) as T
 ): ComputedRef<Array<ExtractBreakpoint<T>>> {
   type BreakpointStatus = ExtractBreakpointStatus<T>
 
@@ -54,14 +65,14 @@ export default function useBreakpoints<T extends BreakpointOptions> (
     else breakpointStatusRef.value[breakpointName] = false
   }
 
-  breakpoints.forEach(key => {
+  breakpoints.forEach((key) => {
     const breakpointValue = screens[key]
     let mql: MediaQueryList
     let cbs: Set<OnMqlChange>
     if (mqlMap[breakpointValue] === undefined) {
       mql = window.matchMedia(createMediaQuery(breakpointValue))
       mql.addEventListener('change', (e: MediaQueryListEvent) => {
-        cbs.forEach(cb => {
+        cbs.forEach((cb) => {
           cb(e, key)
         })
       })
@@ -76,14 +87,14 @@ export default function useBreakpoints<T extends BreakpointOptions> (
     }
     cbs.add(updateBreakpoints)
     if (mql.matches) {
-      cbs.forEach(cb => {
+      cbs.forEach((cb) => {
         cb(mql, key)
       })
     }
   })
 
   onBeforeUnmount(() => {
-    breakpoints.forEach(breakpoint => {
+    breakpoints.forEach((breakpoint) => {
       const { cbs } = mqlMap[screens[breakpoint]]
       if (cbs.has(updateBreakpoints)) {
         cbs.delete(updateBreakpoints)
@@ -96,3 +107,5 @@ export default function useBreakpoints<T extends BreakpointOptions> (
     return breakpoints.filter((key) => value[key]) as any
   })
 }
+
+export default useBreakpoints
