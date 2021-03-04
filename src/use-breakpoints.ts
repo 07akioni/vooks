@@ -55,6 +55,9 @@ function useBreakpoints<T extends BreakpointOptions> (
 function useBreakpoints<T extends BreakpointOptions> (
   screens: T = (defaultBreakpointOptions as unknown) as T
 ): ComputedRef<Array<ExtractBreakpoint<T>>> {
+  // eslint-disable-next-line @typescript-eslint/strict-boolean-expressions
+  if (typeof window.matchMedia !== 'function') return computed(() => [])
+
   type BreakpointStatus = ExtractBreakpointStatus<T>
 
   const breakpointStatusRef = ref<BreakpointStatus>({} as BreakpointStatus)
