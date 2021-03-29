@@ -34,18 +34,25 @@ describe('# useMemo', () => {
     expect(mock).toHaveBeenCalledTimes(1)
     wrapper.unmount()
   })
-  it('only trigger render once (using set & get options)', async () => {
+  it('work with computed writable options', async () => {
     const mock = jest.fn()
     const depRef = ref(0)
     const wrapper = mount(defineComponent({
       setup () {
+        const memoValueRef = useMemo({
+          get: () => {
+            return depRef.value < 2 ? '<2' : '>=2'
+          },
+          set: (v: '<2' | '>=2') => {
+            if (v === '<2') depRef.value = 0
+            else depRef.value = 4
+          }
+        })
         return {
-          memoValue: useMemo({
-            get: () => {
-              return depRef.value < 2 ? '<2' : '>=2'
-            },
-            set: () => {}
-          })
+          memoValue: memoValueRef,
+          setMemoValue: (value: '<2' | '>=2') => {
+            memoValueRef.value = value
+          }
         }
       },
       renderTriggered: mock,
@@ -62,6 +69,12 @@ describe('# useMemo', () => {
     depRef.value = 3
     await nextTick()
     expect(mock).toHaveBeenCalledTimes(1)
+    ;(wrapper.instance as any).setMemoValue('<2')
+    await nextTick()
+    expect(mock).toHaveBeenCalledTimes(2)
+    ;(wrapper.instance as any).setMemoValue('<2')
+    await nextTick()
+    expect(mock).toHaveBeenCalledTimes(2)
     wrapper.unmount()
   })
 })
