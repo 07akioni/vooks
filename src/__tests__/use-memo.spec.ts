@@ -34,4 +34,34 @@ describe('# useMemo', () => {
     expect(mock).toHaveBeenCalledTimes(1)
     wrapper.unmount()
   })
+  it('only trigger render once (using set & get options)', async () => {
+    const mock = jest.fn()
+    const depRef = ref(0)
+    const wrapper = mount(defineComponent({
+      setup () {
+        return {
+          memoValue: useMemo({
+            get: () => {
+              return depRef.value < 2 ? '<2' : '>=2'
+            },
+            set: () => {}
+          })
+        }
+      },
+      renderTriggered: mock,
+      render () {
+        return this.memoValue
+      }
+    }))
+    depRef.value = 1
+    await nextTick()
+    expect(mock).toHaveBeenCalledTimes(0)
+    depRef.value = 2
+    await nextTick()
+    expect(mock).toHaveBeenCalledTimes(1)
+    depRef.value = 3
+    await nextTick()
+    expect(mock).toHaveBeenCalledTimes(1)
+    wrapper.unmount()
+  })
 })
