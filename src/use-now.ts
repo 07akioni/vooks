@@ -4,6 +4,7 @@ interface UseNowOptions {
   type: 'number' | 'date'
 }
 
+// TODO, refactor it, seems the impl is not correct
 function useNow (interval: boolean | number, options: { type: 'number' }): Ref<number>
 function useNow (interval: boolean | number, options: { type: 'date' }): Ref<Date>
 function useNow (interval: boolean | number, { type = 'number' }: UseNowOptions): Ref<number | Date> {

@@ -1,4 +1,5 @@
 import { ref, readonly, Ref, onBeforeMount, onBeforeUnmount } from 'vue'
+import { hasInstance } from './utils'
 
 type Theme = 'light' | 'dark'
 
@@ -42,15 +43,19 @@ function clean (): void {
   lightMql = undefined
 }
 
+let managable = true
+
 export default function useOsTheme (): Readonly<Ref<Theme | null>> {
   /* istanbul ignore next */
   if (process.env.NODE_ENV !== 'test' && !supportMatchMedia) return readonly(osTheme)
   if (process.env.NODE_ENV === 'test' && window.matchMedia === undefined) return readonly(osTheme)
   if (usedCount === 0) init()
-  onBeforeMount(() => { usedCount += 1 })
-  onBeforeUnmount(() => {
-    usedCount -= 1
-    if (usedCount === 0) clean()
-  })
+  if (managable && (managable = hasInstance())) {
+    onBeforeMount(() => { usedCount += 1 })
+    onBeforeUnmount(() => {
+      usedCount -= 1
+      if (usedCount === 0) clean()
+    })
+  }
   return readonly(osTheme)
 }

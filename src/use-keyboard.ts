@@ -1,5 +1,6 @@
 import { onBeforeMount, onBeforeUnmount, reactive, readonly, Ref, watch } from 'vue'
 import { on, off } from 'evtd'
+import { hasInstance } from './utils'
 
 interface useKeyboardOptions {
   keyup?: UseKeyboardHandlers
@@ -101,7 +102,7 @@ export default function useKeyboard (
       })
     }
   }
-  onBeforeMount(() => {
+  const setup = (): void => {
     if (enabledRef === undefined || enabledRef.value) {
       on('keydown', document, keydownHandler)
       on('keyup', document, keyupHandler)
@@ -117,12 +118,17 @@ export default function useKeyboard (
         }
       })
     }
-  })
-  onBeforeUnmount(() => {
-    if (enabledRef === undefined || enabledRef.value) {
-      off('keydown', document, keydownHandler)
-      off('keyup', document, keyupHandler)
-    }
-  })
+  }
+  if (hasInstance()) {
+    onBeforeMount(setup)
+    onBeforeUnmount(() => {
+      if (enabledRef === undefined || enabledRef.value) {
+        off('keydown', document, keydownHandler)
+        off('keyup', document, keyupHandler)
+      }
+    })
+  } else {
+    setup()
+  }
   return readonly(state)
 }
