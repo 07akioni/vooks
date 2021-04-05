@@ -44,7 +44,7 @@
     "vue": "^3.0.0"
   },
   "dependencies": {
-    "evtd": "^0.1.0"
+    "evtd": "^0.2.0"
   },
   "sideEffects": false
 }
