@@ -4,7 +4,8 @@
     "strict": true,
     "declaration": true,
     "strictNullChecks": true,
-    "moduleResolution": "Node"
+    "moduleResolution": "Node",
+    "target": "ES2015"
   },
   "include": [
     "src/**/*"

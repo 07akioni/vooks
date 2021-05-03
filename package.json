@@ -7,7 +7,7 @@
   "scripts": {
     "clean": "rm -rf es lib",
     "dev": "vite",
-    "test-dts": "tsc src/dts-test/index.spec.ts --noEmit --lib ESNext,DOM",
+    "test-dts": "tsc src/dts-test/index.spec.ts --noEmit --lib ESNext,DOM --target ESNext --moduleResolution node",
     "test": "npm run test-dts && jest",
     "lint": "eslint src/**/*",
     "docs": "vitepress dev docs",
