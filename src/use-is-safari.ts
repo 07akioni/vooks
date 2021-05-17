@@ -1,5 +1,7 @@
-import useIsIos from './use-is-ios'
+import { isIos } from './use-is-ios'
+
+const isSafari = isIos || (window as any).safari !== undefined
 
 export default function useIsSafari (): boolean {
-  return (window as any).safari !== undefined || useIsIos()
+  return isSafari
 }
