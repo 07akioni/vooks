@@ -12,6 +12,10 @@ if (fontsReady !== undefined) {
   isFontReady = true
 }
 
+/**
+ * Call callback on fontsReady is resolved. If fontsReady is already resolved,
+ * callback won't be called.
+ */
 export default function onFontsReady (cb: () => any): void {
   /* istanbul ignore next */
   if (process.env.NODE_ENV !== 'test' && isFontReady) return
