@@ -53,7 +53,7 @@ function useBreakpoints<T extends BreakpointOptions> (
   screens: T
 ): ComputedRef<Array<ExtractBreakpoint<T>>>
 function useBreakpoints<T extends BreakpointOptions> (
-  screens: T = (defaultBreakpointOptions as unknown) as T
+  screens: T = defaultBreakpointOptions as unknown as T
 ): ComputedRef<Array<ExtractBreakpoint<T>>> {
   // eslint-disable-next-line @typescript-eslint/strict-boolean-expressions
   if (typeof window.matchMedia !== 'function') return computed(() => [])
@@ -74,11 +74,22 @@ function useBreakpoints<T extends BreakpointOptions> (
     let cbs: Set<OnMqlChange>
     if (mqlMap[breakpointValue] === undefined) {
       mql = window.matchMedia(createMediaQuery(breakpointValue))
-      mql.addEventListener('change', (e: MediaQueryListEvent) => {
-        cbs.forEach((cb) => {
-          cb(e, key)
+      // eslint-disable-next-line @typescript-eslint/strict-boolean-expressions
+      if (mql.addEventListener) {
+        mql.addEventListener('change', (e: MediaQueryListEvent) => {
+          cbs.forEach((cb) => {
+            cb(e, key)
+          })
         })
-      })
+      // eslint-disable-next-line @typescript-eslint/strict-boolean-expressions
+      } else if (mql.addListener) {
+        mql.addListener((e: MediaQueryListEvent) => {
+          cbs.forEach((cb) => {
+            cb(e, key)
+          })
+        })
+      }
+
       cbs = new Set()
       mqlMap[breakpointValue] = {
         mql,
