@@ -11,7 +11,7 @@ describe('# useOsTheme', () => {
     window.matchMedia = matchMedia
   })
   it('return null if not support os theme', () => {
-    window.matchMedia = undefined
+    (window as any).matchMedia = undefined
     mount(
       defineComponent({
         setup () {
@@ -56,7 +56,7 @@ describe('# useOsTheme', () => {
     (window.matchMedia as any) = (query: string) => {
       return {
         matches: false,
-        addEventListener (type, handler: Function) {
+        addEventListener (_: unknown, handler: Function) {
           if (query.includes('light')) {
             triggerLight = handler
           }
@@ -65,6 +65,45 @@ describe('# useOsTheme', () => {
           }
         },
         removeEventListener () {}
+      }
+    }
+    const wrapper = mount(
+      defineComponent({
+        setup () {
+          return {
+            theme: useOsTheme()
+          }
+        },
+        mounted () {
+          expect(this.theme).toEqual(null)
+          triggerDark({ matches: true })
+          expect(this.theme).toEqual('dark')
+          triggerDark({ matches: false })
+          triggerLight({ matches: true })
+          expect(this.theme).toEqual('light')
+          triggerDark({ matches: true })
+          triggerLight({ matches: false })
+          expect(this.theme).toEqual('dark')
+        }
+      })
+    )
+    wrapper.unmount()
+  })
+  it('works (for addListener)', () => {
+    let triggerDark: Function
+    let triggerLight: Function
+    (window.matchMedia as any) = (query: string) => {
+      return {
+        matches: false,
+        addListener (handler: Function) {
+          if (query.includes('light')) {
+            triggerLight = handler
+          }
+          if (query.includes('dark')) {
+            triggerDark = handler
+          }
+        },
+        removeListener () {}
       }
     }
     const wrapper = mount(
