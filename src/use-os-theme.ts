@@ -1,3 +1,5 @@
+/* eslint-disable @typescript-eslint/strict-boolean-expressions */
+/* eslint-disable @typescript-eslint/no-non-null-assertion */
 import { ref, readonly, Ref, onBeforeMount, onBeforeUnmount } from 'vue'
 import { hasInstance } from './utils'
 
@@ -33,19 +35,24 @@ function init (): void {
   } else {
     osTheme.value = null
   }
-  darkMql.addEventListener('change', handleDarkMqlChange)
-  lightMql.addEventListener('change', handleLightMqlChange)
+  if (darkMql.addEventListener) {
+    darkMql.addEventListener('change', handleDarkMqlChange)
+    lightMql.addEventListener('change', handleLightMqlChange)
+  } else if (darkMql.addListener) {
+    darkMql.addListener(handleDarkMqlChange)
+    lightMql.addListener(handleLightMqlChange)
+  }
 }
 
 function clean (): void {
-  ;(darkMql as MediaQueryList).removeEventListener(
-    'change',
-    handleDarkMqlChange
-  )
-  ;(lightMql as MediaQueryList).removeEventListener(
-    'change',
-    handleLightMqlChange
-  )
+  if ('removeEventListener' in darkMql!) {
+    darkMql.removeEventListener('change', handleDarkMqlChange)
+    lightMql!.removeEventListener('change', handleLightMqlChange)
+  } else if ('removeListener' in darkMql!) {
+    darkMql!.removeListener(handleDarkMqlChange)
+    lightMql!.removeListener(handleLightMqlChange)
+  }
+
   darkMql = undefined
   lightMql = undefined
 }
@@ -54,8 +61,12 @@ let managable = true
 
 export default function useOsTheme (): Readonly<Ref<Theme | null>> {
   /* istanbul ignore next */
-  if (process.env.NODE_ENV !== 'test' && !supportMatchMedia) { return readonly(osTheme) }
-  if (process.env.NODE_ENV === 'test' && window.matchMedia === undefined) { return readonly(osTheme) }
+  if (process.env.NODE_ENV !== 'test' && !supportMatchMedia) {
+    return readonly(osTheme)
+  }
+  if (process.env.NODE_ENV === 'test' && window.matchMedia === undefined) {
+    return readonly(osTheme)
+  }
   if (usedCount === 0) init()
   if (managable && (managable = hasInstance())) {
     onBeforeMount(() => {
