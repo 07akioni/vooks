@@ -1,7 +1,7 @@
 import { onMounted, onBeforeUnmount } from 'vue'
+import { isBrowser } from './utils'
 
-const fontsReady =
-  typeof window === 'undefined' ? undefined : (document as any)?.fonts?.ready
+const fontsReady = isBrowser ? (document as any)?.fonts?.ready : undefined
 let isFontReady = false
 
 /* istanbul ignore if */
@@ -24,7 +24,9 @@ export default function onFontsReady (cb: () => any): void {
     process.env.NODE_ENV === 'test' &&
     // dynamic resolving here, since in we may change it in test environment
     (document as any)?.fonts?.ready === undefined
-  ) { return }
+  ) {
+    return
+  }
 
   let deactivated = false
   onMounted(() => {

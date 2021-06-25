@@ -12,7 +12,7 @@ function handleClick (): void {
 let managable = true
 
 export default function useClicked (timeout: number): Readonly<Ref<boolean>> {
-  if (!isBrowser) return { value: false } as any
+  if (!isBrowser) return readonly(ref(false))
   const clickedRef = ref(false)
   let timerId: number | null = null
   function clearTimer (): void {

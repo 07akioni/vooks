@@ -4,6 +4,7 @@ import useBreakpoints, {
   ExtractBreakpoint,
   DefaultBreakpointOptions
 } from './use-breakpoints'
+import { isBrowser } from './utils'
 
 type HasZero<T> = {
   [key in keyof T]: T[key] extends 0 ? true : T[key] extends '0' ? true : false
@@ -26,11 +27,13 @@ function useBreakpoint<T extends BreakpointOptions> (
 function useBreakpoint<T extends BreakpointOptions = DefaultBreakpointOptions> (
   screens?: T
 ): ComputedRef<ExtractBreakpoint<T> | undefined> {
+  if (!isBrowser) return computed(() => undefined)
   // pass ts check
   const breakpointsRef =
     screens !== undefined ? useBreakpoints(screens) : useBreakpoints()
   return computed(() => {
     const { value } = breakpointsRef
+    if (value.length === 0) return undefined
     return value[value.length - 1]
   })
 }

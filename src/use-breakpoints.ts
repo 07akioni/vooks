@@ -1,5 +1,6 @@
 /* eslint-disable @typescript-eslint/consistent-type-assertions */
 import { ref, computed, onBeforeUnmount, ComputedRef } from 'vue'
+import { isBrowser } from './utils'
 
 export type BreakpointOptions = Record<string, number>
 export type ExtractBreakpoint<T extends Record<string, number>> = keyof T
@@ -55,6 +56,7 @@ function useBreakpoints<T extends BreakpointOptions> (
 function useBreakpoints<T extends BreakpointOptions> (
   screens: T = defaultBreakpointOptions as unknown as T
 ): ComputedRef<Array<ExtractBreakpoint<T>>> {
+  if (!isBrowser) return computed(() => [])
   // eslint-disable-next-line @typescript-eslint/strict-boolean-expressions
   if (typeof window.matchMedia !== 'function') return computed(() => [])
 
@@ -81,7 +83,7 @@ function useBreakpoints<T extends BreakpointOptions> (
             cb(e, key)
           })
         })
-      // eslint-disable-next-line @typescript-eslint/strict-boolean-expressions
+        // eslint-disable-next-line @typescript-eslint/strict-boolean-expressions
       } else if (mql.addListener) {
         mql.addListener((e: MediaQueryListEvent) => {
           cbs.forEach((cb) => {

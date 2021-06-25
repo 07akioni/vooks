@@ -23,7 +23,7 @@ let managable = true
 export default function useClickPosition (): Readonly<
 Ref<MousePosition | null>
 > {
-  if (!isBrowser) return { value: null } as any
+  if (!isBrowser) return readonly(ref(null))
   if (usedCount === 0) on('click', window, clickHandler as any, true)
   const setup = (): void => {
     usedCount += 1
