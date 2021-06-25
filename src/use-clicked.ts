@@ -1,6 +1,6 @@
 import { onBeforeMount, onBeforeUnmount, ref, Ref, readonly } from 'vue'
 import { on, off } from 'evtd'
-import { hasInstance } from './utils'
+import { hasInstance, isBrowser } from './utils'
 
 const clickedTimeRef = ref<number | undefined>(undefined)
 
@@ -12,6 +12,7 @@ function handleClick (): void {
 let managable = true
 
 export default function useClicked (timeout: number): Readonly<Ref<boolean>> {
+  if (!isBrowser) return { value: false } as any
   const clickedRef = ref(false)
   let timerId: number | null = null
   function clearTimer (): void {

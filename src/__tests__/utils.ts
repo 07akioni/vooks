@@ -1,9 +1,4 @@
-import {
-  createApp,
-  Component,
-  App,
-  ComponentPublicInstance
-} from 'vue'
+import { createApp, Component, App, ComponentPublicInstance } from 'vue'
 
 interface Wrapper {
   app: App

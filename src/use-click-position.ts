@@ -1,8 +1,11 @@
 import { Ref, ref, readonly, onBeforeMount, onBeforeUnmount } from 'vue'
 import { on, off } from 'evtd'
-import { hasInstance } from './utils'
+import { hasInstance, isBrowser } from './utils'
 
-interface MousePosition { x: number, y: number }
+interface MousePosition {
+  x: number
+  y: number
+}
 
 const mousePositionRef = ref<MousePosition | null>(null)
 
@@ -17,9 +20,14 @@ let usedCount = 0
 
 let managable = true
 
-export default function useClickPosition (): Readonly<Ref<MousePosition | null>> {
+export default function useClickPosition (): Readonly<
+Ref<MousePosition | null>
+> {
+  if (!isBrowser) return { value: null } as any
   if (usedCount === 0) on('click', window, clickHandler as any, true)
-  const setup = (): void => { usedCount += 1 }
+  const setup = (): void => {
+    usedCount += 1
+  }
   if (managable && (managable = hasInstance())) {
     onBeforeMount(setup)
     onBeforeUnmount(() => {
