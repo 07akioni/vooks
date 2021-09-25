@@ -1,17 +1,26 @@
 import { onMounted, onBeforeUnmount } from 'vue'
 import { isBrowser } from './utils'
 
-const fontsReady = isBrowser ? (document as any)?.fonts?.ready : undefined
-let isFontReady = false
+let fontsReady: Promise<void> | undefined
+let isFontReady: boolean
 
-/* istanbul ignore if */
-if (fontsReady !== undefined) {
-  fontsReady.then(() => {
+const init = (): void => {
+  fontsReady = isBrowser ? (document as any)?.fonts?.ready : undefined
+  isFontReady = false
+  /* istanbul ignore if */
+  if (fontsReady !== undefined) {
+    void fontsReady.then(() => {
+      isFontReady = true
+    })
+  } else {
     isFontReady = true
-  })
-} else {
-  isFontReady = true
+  }
 }
+
+init()
+
+// For testing
+export { init }
 
 /**
  * Call callback on fontsReady is resolved. If fontsReady is already resolved,
@@ -19,27 +28,12 @@ if (fontsReady !== undefined) {
  */
 export default function onFontsReady (cb: () => any): void {
   /* istanbul ignore next */
-  if (process.env.NODE_ENV !== 'test' && isFontReady) return
-  if (
-    process.env.NODE_ENV === 'test' &&
-    // dynamic resolving here, since in we may change it in test environment
-    (document as any)?.fonts?.ready === undefined
-  ) {
-    return
-  }
-
+  if (isFontReady) return
   let deactivated = false
   onMounted(() => {
     /* istanbul ignore next */
     if (!isFontReady) {
-      fontsReady.then(() => {
-        if (deactivated) return
-        cb()
-      })
-    }
-    /* istanbul ignore else */
-    if (process.env.NODE_ENV === 'test') {
-      ;(document as any)?.fonts?.ready.then(() => {
+      fontsReady?.then(() => {
         if (deactivated) return
         cb()
       })
