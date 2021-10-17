@@ -34,7 +34,7 @@ function useBreakpoint<T extends BreakpointOptions = DefaultBreakpointOptions> (
   return computed(() => {
     const { value } = breakpointsRef
     if (value.length === 0) return undefined
-    return value[value.length - 1]
+    return value[value.length - 1] as any
   })
 }
 
