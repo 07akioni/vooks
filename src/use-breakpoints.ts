@@ -3,7 +3,7 @@ import { ref, computed, onBeforeUnmount, ComputedRef } from 'vue'
 import { isBrowser } from './utils'
 
 export type BreakpointOptions = Record<string, number>
-export type ExtractBreakpoint<T extends Record<string, number>> = keyof T
+export type ExtractBreakpoint<T extends Record<string, number>> = Extract<keyof T, string>
 export type ExtractBreakpointStatus<T> = {
   [k in keyof T]: boolean
 }
