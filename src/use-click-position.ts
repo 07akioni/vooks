@@ -10,18 +10,24 @@ interface MousePosition {
 const mousePositionRef = ref<MousePosition | null>(null)
 
 function clickHandler (e: MouseEvent): void {
-  if (e.isTrusted) {
+  if (e.clientX > 0 || e.clientY > 0) {
     mousePositionRef.value = {
       x: e.clientX,
       y: e.clientY
     }
   } else {
+    // x = 0 & y = 0
     const { target } = e
-    if (target instanceof HTMLElement) {
+    if (target instanceof Element) {
       const { left, top, width, height } = target.getBoundingClientRect()
-      mousePositionRef.value = {
-        x: left + width / 2,
-        y: top + height / 2
+      if (left > 0 || top > 0) {
+        // impossible to be triggered by real click
+        mousePositionRef.value = {
+          x: left + width / 2,
+          y: top + height / 2
+        }
+      } else {
+        mousePositionRef.value = { x: 0, y: 0 }
       }
     } else {
       mousePositionRef.value = null
