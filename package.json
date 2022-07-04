@@ -31,7 +31,7 @@
     "@types/jest": "^27.0.1",
     "@typescript-eslint/eslint-plugin": "^4.4.0",
     "babel-jest": "^27.1.0",
-    "eslint": "^7.10.0",
+    "eslint": "^8.19.0",
     "eslint-config-standard-with-typescript": "^21.0.1",
     "eslint-plugin-import": "^2.22.1",
     "eslint-plugin-node": "^11.1.0",
