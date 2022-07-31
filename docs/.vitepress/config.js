@@ -5,11 +5,17 @@ module.exports = {
     sidebar: [
       {
         text: 'Get Started',
-        link: '/get-started/'
+        items:[{
+          text: 'Introduction',
+          link: '/get-started/'
+        }]
       },
       {
         text: 'API',
-        link: '/api/'
+        items:[{
+          text:'API Reference',
+          link: '/api/'
+        }]
       }
     ]
   }

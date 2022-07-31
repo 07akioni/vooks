@@ -1,4 +1,5 @@
 import { ComputedRef } from 'vue'
+import { describe } from 'vitest'
 import { useBreakpoint, useBreakpoints, useCompitable } from '../index'
 
 declare function expectType<T> (value: T): void

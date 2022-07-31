@@ -5,9 +5,11 @@
     "declaration": true,
     "strictNullChecks": true,
     "moduleResolution": "Node",
-    "target": "ES2015"
+    "target": "ES2015",
+    "types": ["vitest/globals"]
   },
   "include": [
-    "src/**/*"
+    "src/**/*",
+    "vitest.config.ts"
   ]
 }

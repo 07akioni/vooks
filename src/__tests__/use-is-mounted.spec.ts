@@ -4,7 +4,7 @@ import { useIsMounted } from '../index'
 import { mount } from './utils'
 
 describe('# useIsMounted', () => {
-  it('works', (done) => {
+  it('works', async () => {
     const wrapper = mount(defineComponent({
       setup () {
         const isMounted = useIsMounted()
@@ -20,7 +20,6 @@ describe('# useIsMounted', () => {
         nextTick(() => {
           expect(this.isMounted).toEqual(true)
           wrapper.unmount()
-          done()
         })
       }
     }))

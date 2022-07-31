@@ -21,3 +21,9 @@ export function mount (comp: Component, options?: object): Wrapper {
     unmount: () => app.unmount()
   }
 }
+
+export async function sleep (ms: number): Promise<void> {
+  return await new Promise(resolve => {
+    setTimeout(resolve, ms)
+  })
+}
