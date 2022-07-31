@@ -1,7 +1,14 @@
-module.exports = {
+import { defineConfig } from 'vitepress'
+
+export default defineConfig({
+  lang: 'en-US',
+  lastUpdated: true,
   title: 'Vooks',
   description: 'Just playing around',
   themeConfig: {
+    socialLinks: [
+      { icon: 'github', link: 'https://github.com/07akioni/vooks' },
+    ],
     sidebar: [
       {
         text: 'Get Started',
@@ -19,4 +26,4 @@ module.exports = {
       }
     ]
   }
-}
+})
