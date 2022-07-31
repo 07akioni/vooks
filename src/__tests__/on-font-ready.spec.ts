@@ -1,7 +1,7 @@
 import { defineComponent } from 'vue'
 import { onFontsReady } from '../index'
 import { init } from '../on-fonts-ready'
-import { mount } from './utils'
+import { mount, sleep } from './utils'
 
 describe('# onFontsReady', () => {
   let fonts: any
@@ -14,21 +14,19 @@ describe('# onFontsReady', () => {
   afterEach(() => {
     (document as any).fonts = fonts
   })
-  it('should do nothing when documnt does not support fonts.ready', (done) => {
-    const fn = jest.fn()
+  it('should do nothing when documnt does not support fonts.ready', async () => {
+    const fn = vi.fn()
     const wrapper = mount(defineComponent({
       setup () {
         onFontsReady(fn)
       }
     }))
-    setTimeout(() => {
-      expect(fn).not.toHaveBeenCalled()
-      wrapper.unmount()
-      done()
-    }, 0)
+    await sleep(0)
+    expect(fn).not.toHaveBeenCalled()
+    wrapper.unmount()
   })
-  it('should be called when documnt supports fonts.ready', (done) => {
-    const fn = jest.fn()
+  it('should be called when documnt supports fonts.ready', async () => {
+    const fn = vi.fn()
     ;(document as any).fonts = {
       ready: new Promise((resolve) => {
         setTimeout(resolve, 500)
@@ -44,14 +42,12 @@ describe('# onFontsReady', () => {
         }
       })
     )
-    setTimeout(() => {
-      expect(fn).toHaveBeenCalled()
-      wrapper.unmount()
-      done()
-    }, 1000)
+    await sleep(1000)
+    expect(fn).toHaveBeenCalled()
+    wrapper.unmount()
   })
   it('should not be called when comoponent is unmounted', () => {
-    const fn = jest.fn()
+    const fn = vi.fn()
     let res: any
     ;(document as any).fonts = {
       ready: new Promise(resolve => { res = resolve })

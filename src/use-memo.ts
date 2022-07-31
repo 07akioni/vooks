@@ -38,7 +38,7 @@ function useMemo<T> (
         return valueRef.value
       },
       set value (v: T) {
-        (getterOrOptions as WritableMemoOptions<T>).set(v)
+        (getterOrOptions).set(v)
       }
     } as unknown) as WritableComputedRef<T>
   }

@@ -4,8 +4,8 @@ import { defineComponent } from 'vue'
 
 describe('# useKeyboard', () => {
   it('works with keyup & keydown', () => {
-    const KeyDownArrowUp = jest.fn()
-    const KeyUpArrowDown = jest.fn()
+    const KeyDownArrowUp = vi.fn()
+    const KeyUpArrowDown = vi.fn()
     const wrapper = mount(defineComponent({
       setup () {
         useKeyboard({

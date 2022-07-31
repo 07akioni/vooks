@@ -8,7 +8,7 @@ import {
 
 describe('# useMemo', () => {
   it('only trigger render once', async () => {
-    const mock = jest.fn()
+    const mock = vi.fn()
     const depRef = ref(0)
     const wrapper = mount(defineComponent({
       setup () {
@@ -35,7 +35,7 @@ describe('# useMemo', () => {
     wrapper.unmount()
   })
   it('work with computed writable options', async () => {
-    const mock = jest.fn()
+    const mock = vi.fn()
     const depRef = ref(0)
     const wrapper = mount(defineComponent({
       setup () {

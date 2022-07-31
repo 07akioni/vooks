@@ -33,7 +33,7 @@ export default function onFontsReady (cb: () => any): void {
   onMounted(() => {
     /* istanbul ignore next */
     if (!isFontReady) {
-      fontsReady?.then(() => {
+      void fontsReady?.then(() => {
         if (deactivated) return
         cb()
       })
